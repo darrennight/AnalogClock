@@ -1,7 +1,6 @@
 package com.wxp.clock;
 
 import android.view.View;
-import android.R.integer;
 import android.content.*;
 import android.util.*;
 import android.content.res.*;
@@ -31,9 +30,9 @@ public class AnalogClock extends View {
 	private boolean mAttached = false;
 	private Paint mPaint;
 	private Handler myHandler=new Handler();
-   
-	boolean noSecHand=false;
-	Message mSecMsg;
+ 
+	boolean noSecHand=false;//不显示秒针
+	
 
 	public AnalogClock(Context context) {
 		this(context, null);
@@ -64,7 +63,7 @@ public class AnalogClock extends View {
 
 	@Override
 	protected void onAttachedToWindow() {
-		// TODO: Implement this method
+	
 		super.onAttachedToWindow();
 		if (!mAttached) {
 			mAttached = true;
@@ -80,28 +79,10 @@ public class AnalogClock extends View {
 	}
 
 
-	/*
-	 * 通过启动一个新的线程来监听每秒的时间变化而不是通过过去广播的方式
-	 */
-/*	public void initSecondThread() {
-		// mSecMsg=handler.obtainMessage();
-		Thread secThread = new Thread() {
-			public void run() {
-				mSecMsg = handler.obtainMessage(0);
-				handler.sendMessage(mSecMsg);
-				try {
-					sleep(1000);
-				} catch (Exception e) {
-
-				}
-			}
-		};
-		secThread.start();
-	}*/
 
 	@Override
 	protected void onDetachedFromWindow() {
-		// TODO: Implement this method
+		
 		super.onDetachedFromWindow();
 		if (mAttached) {
 			mContext.unregisterReceiver(br);
@@ -222,8 +203,8 @@ public class AnalogClock extends View {
 		int sec = mCalendar.second;
 
 		mSec = sec;
-		mMin = min + sec / 60.0f;
-		mHour = hour + min / 60.0f;
+		mMin = min + sec / 60;
+		mHour = hour + min / 60;
 
 		mChange = true;
 
@@ -242,6 +223,11 @@ public class AnalogClock extends View {
 		}
 	};
 	
+	
+
+	/*
+	 * 对于每秒的时间变化是通过启动一个新的线程来监听每秒的时间变化而不是通过过去广播的方式监听的
+	 */
     private final Runnable mClockTick = new Runnable () {
 
         @Override
